@@ -20,8 +20,9 @@ const start = async () => {
 
 const prisma = new PrismaClient();
 
-prisma.$connect()
+prisma
+  .$connect()
   .then(() => console.log("✅ DB connected"))
-  .catch((e) => console.error("❌ DB error", e));
+  .catch((e: unknown) => console.error("❌ DB error", e));
 
 start();
