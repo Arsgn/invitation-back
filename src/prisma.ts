@@ -1,20 +1,27 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 
-let prisma: PrismaClient;
+const connectionString = process.env.DATABASE_URL;
 
-const getPrisma = () => {
-  if (!prisma) {
-    const adapter = new PrismaPg({
-      connectionString: process.env.DATABASE_URL!,
-    });
-    prisma = new PrismaClient({ adapter });
-  }
-  return prisma;
+if (!connectionString) {
+  throw new Error("❌ DATABASE_URL не указан в .env");
+}
+
+const adapter = new PrismaPg({
+  connectionString,
+});
+
+// Singleton (важно для dev и прод)
+const globalForPrisma = global as unknown as {
+  prisma: PrismaClient | undefined;
 };
 
-export default new Proxy({} as PrismaClient, {
-  get(_, prop) {
-    return (getPrisma() as any)[prop];
-  },
-});
+export const prisma =
+  globalForPrisma.prisma ??
+  new PrismaClient({
+    adapter,
+  });
+
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
+}

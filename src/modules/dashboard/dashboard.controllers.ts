@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
-import { Guest, PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { Guest } from "@prisma/client";
+import { prisma } from "../../prisma";
 
 // GET /dashboard/:weddingId
 const getDashboard = async (req: Request, res: Response) => {
@@ -20,7 +19,8 @@ const getDashboard = async (req: Request, res: Response) => {
     };
 
     res.json({ guests, stats });
-  } catch (error) {
+  } catch (error: unknown) {
+    console.error(error);
     res.status(500).json({ error: "Ошибка dashboard" });
   }
 };
