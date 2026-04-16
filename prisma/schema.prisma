@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // url      = env("DATABASE_URL")
+}
+
+model Wedding {
+  id          String   @id @default(uuid())
+  coupleNames String   // "Таалайгул & Азамат"
+  date        DateTime // дата свадьбы (для таймера и календаря)
+  
+  // Локация церемонии
+  ceremonyVenue    String   // название места
+  ceremonyAddress  String   // адрес
+  ceremonyLat      Float?   // широта (для карты)
+  ceremonyLng      Float?   // долгота (для карты)
+
+  // Локация банкета (если отдельное место)
+  banquetVenue     String?
+  banquetAddress   String?
+  banquetLat       Float?
+  banquetLng       Float?
+
+  guests      Guest[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Guest {
+  id         String      @id @default(uuid())
+  name       String      // имя гостя
+  phone      String?     // телефон
+  status     GuestStatus @default(PENDING) // придёт или нет
+  plusOne    Boolean     @default(false)   // с парой
+
+  weddingId  String
+  wedding    Wedding     @relation(fields: [weddingId], references: [id])
+
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+enum GuestStatus {
+  PENDING   // ещё не ответил
+  ATTENDING // придёт
+  DECLINED  // не придёт
+}
