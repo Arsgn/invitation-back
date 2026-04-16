@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { Guest, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -8,7 +8,7 @@ const getDashboard = async (req: Request, res: Response) => {
   try {
     const { weddingId } = req.params;
 
-    const guests = await prisma.guest.findMany({
+    const guests: Guest[] = await prisma.guest.findMany({
       where: { weddingId: String(weddingId) },
     });
 
