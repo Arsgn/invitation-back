@@ -7,7 +7,7 @@ export const buildServer = () => {
 
   server.use(
     cors({
-      origin: ["http://localhost:3000", "http://localhost:3001"],
+      origin: ["http://localhost:3000", "http://localhost:3001", "https://invitation-front-five.vercel.app/home"],
     })
   );
 
